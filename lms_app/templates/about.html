@@ -5,6 +5,55 @@
     <h1>About Us</h1>
 </header>
 <main>
-    <p>Welcome to our website! We are dedicated to providing the best service possible. Our team is passionate about what we do and we strive to exceed your expectations.</p>
+    <section>
+        <p>Welcome to our website! We are dedicated to providing the best service possible. Our team is passionate about what we do, and we strive to exceed your expectations.</p>
+    </section>
+
+    <section>
+        <h2>Our Mission</h2>
+        <p>We aim to bring innovation and excellence in everything we do. Our goal is to make a positive impact and deliver outstanding results for our customers.</p>
+    </section>
+
+    <section>
+        <h2>Meet Our Team</h2>
+        <div class="team">
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/team1.jpg') }}" alt="Team Member 1 ">
+                <h3>Capuli, Franz Lester G.</h3>
+                <p>Founder & CEO</p>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/team2.jpg') }}" alt="Team Member 2 ">
+                <h3>Quiambao, John Maurice P.</h3>
+                <p>Founder & Collaborator</p>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/team3.jpg') }}" alt="Team Member 3 ">
+                <h3>Cortez, Jethro C.</h3>
+                <p>Founder & Collaborator</p>   
+        </div>
+    </section>
 </main>
+
+<style>
+    main {
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+    .team {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    .team-member {
+        text-align: center;
+    }
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+
 {% endblock %}
