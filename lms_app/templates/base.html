@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookIT - {% block title %}{% endblock %}</title>
+
+    <!-- 🌐 Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- 🎨 Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/additional.css') }}">
+
+    <!-- ⚡ JavaScript -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/book-actions.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+</head>
+
+<body>
+    <nav class="navbar glass-effect">
+        <div class="container">
+            <!-- Logo -->
+            <a href="{{ url_for('main.index') }}" class="logo">
+                {% if request.path == '/' or request.path == '/index.html' %}
+                    <img src="{{ url_for('static', filename='images/logo-icon.png') }}" alt="BookIT Logo" class="logo-icon">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/logo-name.png') }}" alt="BookIT" class="logo-name">
+                {% endif %}
+            </a>
+
+            <!-- Navbar Toggle (for mobile) -->
+            <button class="navbar-toggler" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                {% if current_user.is_authenticated %}
+                    {% if request.endpoint == 'main.user_dashboard' %}
+                        <li>
+                            <form action="{{ url_for('main.search_books') }}" method="GET" class="search-form">
+                                <div class="search-container">
+                                    <input type="search" 
+                                           name="q" 
+                                           class="search-input"
+                                           placeholder="Search books..." 
+                                           aria-label="Search books"
+                                           value="{{ request.args.get('q', '') }}">
+                                    <i class="fas fa-search search-icon"></i>
+                                </div>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.user_dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-columns"></i> Dashboard
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% if current_user.role == 'admin' %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-shield-alt"></i> Admin
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.logout') }}" class="btn btn-primary">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.login') }}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.register') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                {% endif %}
+                
+                <!-- Theme Toggle -->
+                <li>
+                    <button class="theme-toggle btn-icon" aria-label="Toggle theme" aria-pressed="false">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 💡 Flash Messages -->
+    <section class="flash-messages" aria-live="polite">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}" role="alert">
+                            <span class="flash-icon">
+                                {% if category == 'success' %}✅
+                                {% elif category == 'error' %}❌
+                                {% else %}ℹ️{% endif %}
+                            </span>
+                            {{ message }}
+                            <button class="flash-close" aria-label="Close">&times;</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </section>
+
+    <!-- 📄 Page Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 📋 Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='images/logo-icon.png') }}" alt="BookIT Logo" class="logo-icon-sm">
+                    <span>BookIT</span>
+                </div>
+                <div class="footer-links">
+                    <a href="{{ url_for('main.about') }}" class="animated-link">About</a>
+                    <a href="{{ url_for('main.privacy') }}" class="animated-link">Privacy</a>
+                    <a href="{{ url_for('main.terms') }}" class="animated-link">Terms</a>
+                    <a href="{{ url_for('main.contacts') }}" class="animated-link">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ '' | current_year }} BookIT. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

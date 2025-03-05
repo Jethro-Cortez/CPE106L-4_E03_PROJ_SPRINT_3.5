@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Search Books{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="section-card">
+        <div class="card-header">
+            <h1>
+                <i class="fas fa-search"></i>
+                {% if query %}Search Results for "{{ query }}"{% else %}Browse All Books{% endif %}
+            </h1>
+            <form method="GET" action="{{ url_for('main.search_books') }}" class="search-container">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="search" 
+                           name="q" 
+                           class="search-input" 
+                           placeholder="Search books..." 
+                           value="{{ query }}"
+                           aria-label="Search books">
+                </div>
+            </form>
+        </div>
+
+        <div class="book-grid">
+            {% for book in books.items %}
+            <article class="book-card">
+                <img src="{{ url_for('static', filename='covers/' + book.cover) if book.cover else url_for('static', filename='images/placeholder-cover.png') }}" 
+                     alt="{{ book.title }} cover">
+                <h3>{{ book.title }}</h3>
+                <p class="author">{{ book.author }}</p>
+                <div class="book-meta">
+                    <span class="genre-badge">{{ book.genre }}</span>
+                    <span class="status-pill {{ 'available' if book.availability == 'Available' else 'borrowed' }}">
+                        {{ book.availability }}
+                    </span>
+                </div>
+                <a href="{{ url_for('main.book_details', slug=book.slug) }}" class="btn btn-primary">
+                    <i class="fas fa-info-circle"></i> Details
+                </a>
+            </article>
+            {% else %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <i class="fas fa-book fa-3x"></i>
+                <p>No books found matching your search.</p>
+                <a href="{{ url_for('main.search_books') }}" class="btn btn-primary">
+                    <i class="fas fa-undo"></i> Clear Search
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if books.pages > 1 %}
+        <div class="pagination">
+            {% if books.has_prev %}
+            <a href="{{ url_for('main.search_books', q=query, page=books.prev_num) }}" class="btn">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% endif %}
+            
+            <span class="current-page">Page {{ books.page }} of {{ books.pages }}</span>
+            
+            {% if books.has_next %}
+            <a href="{{ url_for('main.search_books', q=query, page=books.next_num) }}" class="btn">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

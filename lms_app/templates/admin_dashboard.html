@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-dashboard">
+        <!-- 👑 Dashboard Header -->
+        <header class="dashboard-header">
+            <h1><i class="fas fa-shield-alt"></i> Library Administration</h1>
+            <div class="admin-actions">
+                <a href="{{ url_for('main.add_book') }}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Add Book
+                </a>
+                <a href="{{ url_for('main.admin_register', key='sinigangmix') }}" class="btn btn-primary">
+                    <i class="fas fa-user-shield"></i> Add Admin
+                </a>
+            </div>
+        </header>
+
+        <!-- 📊 System Analytics -->
+        <section class="section-card" aria-labelledby="system-analytics-heading">
+            <h2 id="system-analytics-heading"><i class="fas fa-chart-line"></i> System Analytics</h2>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <i class="fas fa-books fa-2x" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <span class="metric-value">{{ total_books if total_books else '0' }}</span>
+                    <h3>Total Books</h3>
+                </div>
+                <div class="metric-item">
+                    <i class="fas fa-book-reader fa-2x" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <span class="metric-value">{{ active_loans if active_loans else '0' }}</span>
+                    <h3>Active Loans</h3>
+                </div>
+                <div class="metric-item">
+                    <i class="fas fa-exclamation-circle fa-2x" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <span class="metric-value">{{ overdue_books if overdue_books else '0' }}</span>
+                    <h3>Overdue Books</h3>
+                </div>
+                <div class="metric-item">
+                    <i class="fas fa-trophy fa-2x" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <span class="metric-value">{{ top_book.title if top_book else 'No Data' }}</span>
+                    <h3>Top Borrowed Book</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📚 Book Management -->
+        <section class="section-card" aria-labelledby="book-management-heading">
+            <div class="card-header">
+                <h2 id="book-management-heading"><i class="fas fa-book-open"></i> Book Management</h2>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="search" class="search-input" id="admin-book-search" placeholder="Search books..." aria-label="Search books">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <caption>Manage library books</caption>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-book-list">
+                        {% if books %}
+                            {% for book in books %}
+                            <tr>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.author }}</td>
+                                <td>{{ book.genre }}</td>
+                                <td>
+                                    <span class="status-pill {{ 'available' if book.availability else 'borrowed' }}">
+                                        {{ 'Available' if book.availability else 'Borrowed' }}
+                                    </span>
+                                </td>
+                                <td class="actions-cell">
+                                    <a href="{{ url_for('main.edit_book', book_id=book.id) }}" 
+                                       class="btn btn-sm btn-icon" 
+                                       title="Edit"
+                                       aria-label="Edit {{ book.title }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" 
+                                          action="{{ url_for('main.delete_book', book_id=book.id) }}" 
+                                          style="display:inline;" 
+                                          onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-icon btn-danger" 
+                                                title="Delete"
+                                                aria-label="Delete {{ book.title }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-book fa-3x"></i>
+                                        <p>No books found. Add some books to your library!</p>
+                                        <a href="{{ url_for('main.add_book') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus-circle"></i> Add Book
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 💰 Overdue Fines -->
+        <section class="section-card" aria-labelledby="overdue-fines-heading">
+            <h2 id="overdue-fines-heading"><i class="fas fa-money-bill-wave"></i> Overdue Fines</h2>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <caption>List of overdue fines and their status</caption>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Book</th>
+                            <th>Overdue Days</th>
+                            <th>Fine Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if overdue_transactions %}
+                            {% for transaction in overdue_transactions %}
+                            <tr>
+                                <td>{{ transaction.user.username }}</td>
+                                <td>{{ transaction.book.title }}</td>
+                                <td>{{ (transaction.return_date - transaction.due_date).days if transaction.return_date else 'Pending' }}</td>
+                                <td class="fine-amount">${{ transaction.fine_amount }}</td>
+                                <td>
+                                    <span class="status-pill {{ transaction.status.lower() }}">
+                                        {{ transaction.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-check-circle fa-3x"></i>
+                                        <p>No overdue books. Everything is on time!</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- 🔍 Admin Book Search Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminSearchInput = document.getElementById('admin-book-search');
+        const adminBookList = document.getElementById('admin-book-list').children;
+
+        adminSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            let hasResults = false;
+            
+            Array.from(adminBookList).forEach(row => {
+                const title = row.children[0].textContent.toLowerCase();
+                const author = row.children[1].textContent.toLowerCase();
+                const genre = row.children[2].textContent.toLowerCase();
+                const isMatch = title.includes(searchTerm) || author.includes(searchTerm) || genre.includes(searchTerm);
+                
+                row.style.display = isMatch ? '' : 'none';
+                if (isMatch) hasResults = true;
+            });
+            
+            // Show no results message if needed
+            const noResultsRow = document.getElementById('no-results-row');
+            if (!hasResults && searchTerm && !noResultsRow) {
+                const tbody = document.getElementById('admin-book-list');
+                const tr = document.createElement('tr');
+                tr.id = 'no-results-row';
+                tr.innerHTML = `
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="fas fa-search fa-3x"></i>
+                            <p>No books found matching "${searchTerm}"</p>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            } else if ((hasResults || !searchTerm) && noResultsRow) {
+                noResultsRow.remove();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
