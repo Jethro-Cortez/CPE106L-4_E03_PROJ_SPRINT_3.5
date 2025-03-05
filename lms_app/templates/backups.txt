@@ -1,0 +1,44 @@
+div class=container
+    !-- 📚 Feature Highlights --
+    section class=features
+        div class=feature-card
+            i class=fas fa-book-reader fa-3xi
+            h3Borrow Booksh3
+            pExplore a wide range of genres and borrow books with just a few clicks. Our streamlined process makes reading accessible to everyone.p
+        div
+
+        div class=feature-card
+            i class=fas fa-star fa-3xi
+            h3Leave Reviewsh3
+            pShare your thoughts and help others discover their next favorite book. Your reviews create a vibrant community of readers.p
+        div
+
+        div class=feature-card
+            i class=fas fa-search fa-3xi
+            h3Explore Libraryh3
+            pUse advanced filters and recommendations to find the perfect read for any occasion, mood, or interest.p
+        div
+    section
+
+    !-- ⭐ Testimonials --
+    section class=testimonials
+        h2What Our Readers Sayh2
+        div class=testimonial-cards
+            div class=testimonial-card
+                pBookIT made my reading journey so much smoother! The interface is intuitive and the recommendations are spot on. Highly recommend. 📖p
+                span- Alexander A.span
+            div
+            div class=testimonial-card
+                pLove the UI and the recommendation engine is spot on! I've discovered so many great books I wouldn't have found otherwise. 🌟p
+                span- Kristoff L.span
+            div
+            div class=testimonial-card
+                pA must-have for any book lover. The community reviews are gold and have helped me find my new favorite authors. 💬p
+                span- JE G.span
+            div
+            div class=testimonial-card
+                pA game-changer for our library! The admin tools make managing our collection effortless. Highly recommend. 💬p
+                span- Marc D.span
+            div
+        div
+    section

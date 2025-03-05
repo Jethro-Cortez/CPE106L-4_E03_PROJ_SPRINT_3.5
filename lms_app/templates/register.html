@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-user-plus fa-3x" style="color: var(--primary-color); margin-bottom: 1rem;"></i>
+            <h2 class="auth-title">Create an Account 📝</h2>
+            <p class="auth-subtitle">Join BookIT and start your reading journey!</p>
+        </div>
+
+        <form method="POST" class="auth-form" id="register-form">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> Username
+                </label>
+                <input type="text" 
+                       id="username" 
+                       name="username" 
+                       class="form-control" 
+                       placeholder="Choose a username" 
+                       required 
+                       autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       class="form-control" 
+                       placeholder="Enter your email" 
+                       required 
+                       autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       class="form-control" 
+                       placeholder="Create a password" 
+                       required 
+                       autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">
+                    <i class="fas fa-check-circle"></i> Confirm Password
+                </label>
+                <input type="password" 
+                       id="confirm_password" 
+                       name="confirm_password" 
+                       class="form-control" 
+                       placeholder="Confirm your password" 
+                       required>
+            </div>
+
+            <input type="hidden" name="role" value="user">
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('main.login') }}">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

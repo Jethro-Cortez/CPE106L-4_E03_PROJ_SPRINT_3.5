@@ -1,0 +1,364 @@
+/* 🌗 Default (Light Mode) */
+:root {
+  --primary-color: #393d3f;
+  --secondary-color: #fdfdff;
+  --accent-color-1: #c6c5b9;
+  --accent-color-2: #62929e;
+  --accent-color-3: #546a7b;
+  --background-color: #fdfdff;
+  --chart: #636363;
+  --card-bg: #ffffff;
+  --card-bg-rgb: 255, 255, 255;
+  --card-bg-alt: #f5f5f7;
+  --text-color: #393d3f;
+  --text-muted: #6d7275;
+  --border-color: #e2e8f0;
+  --button: #393d3f;
+  --hvr: #546a7b;
+  --radius: 0.75rem;
+  --shadow-color: 210 40% 50%;
+  --transition-standard: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 🌑 Dark Mode */
+[data-theme="dark"] {
+  --primary-color: #62929e;
+  --secondary-color: #fdfdff;
+  --accent-color-1: #c6c5b9;
+  --accent-color-2: #62929e;
+  --accent-color-3: #546a7b;
+  --background-color: #131319;
+  --chart: #04161c;
+  --card-bg: #2d3035;
+  --card-bg-rgb: 45, 48, 53;
+  --card-bg-alt: #393d3f;
+  --text-color: #fdfdff;
+  --text-muted: #c6c5b9;
+  --border-color: #546a7b;
+  --button: #62929e;
+  --hvr: #546a7b;
+  --shadow-color: 210 40% 10%;
+}
+
+/* 🎨 Base Styles with Optimized Variables */
+:root {
+  /* Ensure these variables are defined elsewhere or add them here */
+  --transition-standard: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --radius: 0.75rem;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Zilla Slab", Georgia, serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 0;
+  color: var(--heading-color, var(--text-color));
+}
+
+/* Common Component Styling - Consolidated */
+.navbar, 
+.auth-card, 
+.card, 
+.book-detail, 
+.feedback-container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+}
+
+/* Enhanced Link Styling */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+a:hover {
+  color: var(--accent-color-2);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent-color-2);
+  outline-offset: 2px;
+}
+
+a.animated-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--accent-color-2);
+  transition: width 0.3s ease;
+}
+
+a.animated-link:hover::after,
+a.animated-link:focus-visible::after {
+  width: 100%;
+}
+
+/* Optimized Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color-1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color-2);
+}
+
+/* Standard scrollbar for Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color-1) var(--background-color);
+}
+
+/* Improved Focus Styles for Accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent-color-2);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+/* Optimized Animations with will-change */
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: opacity;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.animate-slide-right {
+  animation: slideRight 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Enhanced Glass Morphism Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.5px);
+  -webkit-backdrop-filter: blur(5.5px); /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-effect:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Optimized Button Hover Effects */
+.btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: -1;
+}
+
+.btn:hover::after {
+  width: 300%;
+  height: 300%;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); }
+  h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+  h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
+  body { font-size: 0.95rem; }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-slide-left,
+  .animate-slide-right {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .btn::after {
+    display: none !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .navbar, 
+  .btn, 
+  .glass-effect {
+    background: none !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    color: black !important;
+  }
+  
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+  
+  a::after {
+    display: none !important;
+  }
+  
+  @page {
+    margin: 1.5cm;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (forced-colors: active) {
+  .btn,
+  .navbar,
+  .card,
+  .auth-card,
+  .book-detail,
+  .feedback-container {
+    border: 2px solid currentColor;
+  }
+  
+  a:focus-visible {
+    outline: 3px solid currentColor;
+  }
+}

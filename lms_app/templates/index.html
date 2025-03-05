@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Welcome to BookIT{% endblock %}
+
+{% block content %}
+<!-- 🎉 Hero Section with Animated CTA -->
+<section class="hero">
+    <!-- 🎬 Background Video -->
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="{{ url_for('static', filename='videos/hero-background.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- 🌑 Overlay for Contrast -->
+    <div class="hero-overlay"></div>
+
+    <!-- 💡 Hero Content -->
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Welcome to 
+            <img src="{{ url_for('static', filename='images/logo-name.png') }}" alt="BookIT" class="logo-display">
+        </h1>
+        <p class="hero-subtitle">A modern, open-source library management system built with Python.</p>
+
+        <!-- 🎯 Animated Call-to-Action -->
+        <div class="hero-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.user_dashboard') }}" class="cta-btn">
+                    <i class="fas fa-columns"></i> Go to Dashboard
+                </a>
+                <a href="{{ url_for('main.search_books') }}" class="cta-btn">
+                    <i class="fas fa-search"></i> Browse Books
+                </a>
+            {% else %}
+                <a href="{{ url_for('main.login') }}" class="cta-btn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </a>
+                <a href="{{ url_for('main.register') }}" class="cta-btn">
+                    <i class="fas fa-user-plus"></i> Join Now!
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- 💥 Subtle CTA Prompt -->
+        <p class="cta-prompt">Discover, borrow, and manage your library experience today!</p>
+    </div>
+</section>
+
+<div class="container">
+    <!-- 📚 Feature Highlights -->
+    <section class="features">
+        <div class="feature-card">
+            <i class="fas fa-book-reader fa-3x"></i>
+            <h3>Borrow Books</h3>
+            <p>Explore a wide range of genres and borrow books with just a few clicks. Our streamlined process makes reading accessible to everyone.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-star fa-3x"></i>
+            <h3>Leave Reviews</h3>
+            <p>Share your thoughts and help others discover their next favorite book. Your reviews create a vibrant community of readers.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-search fa-3x"></i>
+            <h3>Explore Library</h3>
+            <p>Use advanced filters and recommendations to find the perfect read for any occasion, mood, or interest.</p>
+        </div>
+    </section>
+
+    
+
+</div>
+{% endblock %}

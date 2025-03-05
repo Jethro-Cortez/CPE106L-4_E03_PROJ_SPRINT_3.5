@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="book-detail animate-fade-in">
+        <!-- 📖 Book Overview -->
+        <div class="book-header">
+            <div class="book-cover-lg">
+                <img src="{{ url_for('static', filename='covers/' + book.cover) }}" 
+                    alt="{{ book.title }} cover">
+            </div>
+
+            <div class="book-meta">
+                <h1>{{ book.title }}</h1>
+                <div class="book-author">By {{ book.author }}</div>
+
+                <!-- 📊 Availability Status -->
+                <div class="book-status">
+                    <span class="status-indicator {{ 'available' if not active_transaction else 'unavailable' }}">
+                        <i class="fas fa-{{ 'check-circle' if not active_transaction else 'times-circle' }}"></i>
+                        {{ 'Available' if not active_transaction else 'Unavailable' }}
+                    </span>
+                    {% if active_transaction %}
+                    <p class="due-date">
+                        <i class="fas fa-clock"></i>
+                        Expected return: {{ active_transaction.due_date.strftime('%Y-%m-%d') }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- 📅 Borrow/Join Waitlist -->
+                {% if current_user.is_authenticated and current_user.role == 'user' %}
+                <form method="POST" action="{{ url_for('main.borrow_book', book_id=book.id) }}" class="borrow-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-primary btn-block" {{ 'disabled' if not book.availability }}>
+                        <i class="fas fa-{{ 'book' if book.availability else 'list' }}"></i>
+                        {{ 'Borrow Now' if book.availability else 'Join Waitlist' }}
+                    </button>
+                </form>
+                {% else %}
+                    <div class="login-hint">
+                        <i class="fas fa-lock"></i>
+                        <a href="{{ url_for('main.login') }}" class="animated-link">Log in</a> to borrow or review books.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 📋 Book Details -->
+        <section class="book-info-card">
+            <h2 class="card-header">Book Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <h3><i class="fas fa-tag"></i> Genre</h3>
+                    <p>{{ book.genre }}</p>
+                </div>
+                <div class="detail-item">
+                    <h3><i class="fas fa-calendar-alt"></i> Published Year</h3>
+                    <p>{{ book.publication_year }}</p>
+                </div>
+                <div class="detail-item">
+                    <h3><i class="fas fa-barcode"></i> ISBN</h3>
+                    <p>{{ book.isbn }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ⭐ Reviews Section -->
+        <section class="reviews-card">
+            <div class="card-header">
+                <h2><i class="fas fa-comments"></i> Community Reviews</h2>
+                <span class="rating-badge">
+                    <i class="fas fa-star"></i> {{ average_rating }}/5
+                </span>
+            </div>
+
+            <div class="reviews-container">
+                {% for feedback in feedbacks %}
+                <div class="review-item animate-fade-in" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                    <div class="review-header">
+                        <div class="user-badge">
+                            <i class="fas fa-user-circle"></i>
+                            {{ feedback.user.username }}
+                        </div>
+                        <div class="review-meta">
+                            <span class="review-date">{{ feedback.timestamp.strftime('%Y-%m-%d') }}</span>
+                            <div class="review-rating">
+                                {% for _ in range(feedback.rating) %}
+                                <i class="fas fa-star"></i>
+                                {% endfor %}
+                                {% for _ in range(5 - feedback.rating) %}
+                                <i class="far fa-star"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="review-text">{{ feedback.message }}</p>
+                </div>
+                {% else %}
+                <div class="no-reviews">
+                    <i class="fas fa-book-open fa-3x" style="color: var(--text-muted); margin-bottom: 1rem;"></i>
+                    <p>No reviews yet. Be the first to review!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- 📝 Submit Review -->
+            {% if current_user.is_authenticated and current_user.role == 'user' %}
+            <form method="POST" action="{{ url_for('main.add_feedback', book_id=book.id) }}" class="review-form">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <h3><i class="fas fa-pen"></i> Write Your Review</h3>
+                <div class="form-group">
+                    <textarea id="review-text" 
+                              name="message" 
+                              class="form-control" 
+                              rows="4"
+                              placeholder="Share your thoughts about this book..."
+                              required></textarea>
+                </div>
+
+                <div class="form-group rating-group">
+                    <label>Rating:</label>
+                    <div class="star-rating">
+                        {% for i in range(5,0,-1) %}
+                        <input type="radio" id="star{{i}}" name="rating" value="{{i}}" required>
+                        <label for="star{{i}}" class="fas fa-star"></label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Submit Review
+                </button>
+            </form>
+            {% else %}
+                <div class="login-hint">
+                    <i class="fas fa-pen"></i>
+                    <a href="{{ url_for('main.login') }}" class="animated-link">Log in</a> to submit a review.
+                </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

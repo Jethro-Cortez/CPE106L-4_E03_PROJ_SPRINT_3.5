@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Book{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Edit Book</h1>
+
+    <p>Update the details of the book.</p>
+
+            <!-- 🛡️ Flash Messages for Feedback -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" id="editBookForm" novalidate>
+        {{ form.hidden_tag() }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <!-- 📚 Book Title -->
+        <div class="form-group floating-label">
+            <input type="text" id="title" name="title" class="form-control" placeholder=" " required aria-required="true">
+            <label for="title"><i class="fas fa-book"></i> Title <span class="required">*</span></label>
+            <small class="form-error" id="titleError">Title is required.</small>
+        </div>
+
+        <!-- 👤 Author -->
+        <div class="form-group floating-label">
+            <input type="text" id="author" name="author" class="form-control" placeholder=" " required aria-required="true">
+            <label for="author"><i class="fas fa-user-edit"></i> Author <span class="required">*</span></label>
+            <small class="form-error" id="authorError">Author is required.</small>
+        </div>
+
+        <!-- 🏷️ Genre -->
+        <div class="form-group floating-label">
+            <input type="text" id="genre" name="genre" class="form-control" placeholder=" ">
+            <label for="genre"><i class="fas fa-tag"></i> Genre</label>
+        </div>
+
+        <!-- 📝 Description -->
+        <div class="form-group floating-label">
+            <textarea id="description" name="description" class="form-control" rows="4" placeholder=" "></textarea>
+            <label for="description"><i class="fas fa-align-left"></i> Description</label>
+        </div>
+
+        <!-- 📅 Publication Year -->
+        <div class="form-group floating-label">
+            <input type="number" id="publication_year" name="publication_year" class="form-control" min="1900" max="{{ current_year }}" placeholder=" ">
+            <label for="publication_year"><i class="fas fa-calendar-alt"></i> Publication Year</label>
+        </div>
+
+        <!-- 🔢 Quantity with Real-Time Feedback -->
+        <div class="form-group floating-label">
+            <input type="number" id="quantity" name="quantity" class="form-control" min="1" placeholder=" " required aria-required="true">
+            <label for="quantity"><i class="fas fa-sort-numeric-up"></i> Quantity <span class="required">*</span></label>
+            <small class="form-error" id="quantityError">Quantity must be at least 1.</small>
+            <p id="quantity-feedback" class="quantity-feedback"></p>
+        </div>
+
+        <!-- 📖 ISBN -->
+        <div class="form-group floating-label">
+            <input type="text" id="isbn" name="isbn" class="form-control" placeholder=" ">
+            <label for="isbn"><i class="fas fa-barcode"></i> ISBN</label>
+        </div>
+
+        <button type="submit" class="btn-gradient">
+            <i class="fas fa-plus-circle"></i> Update Book
+        </button>
+        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

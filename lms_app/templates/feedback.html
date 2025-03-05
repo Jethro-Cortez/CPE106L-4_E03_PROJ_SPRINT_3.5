@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Feedback for {{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="container animate-fade-in">
+    <!-- Enhanced Header Section -->
+    <header class="feedback-header mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="feedback-title display-5 fw-bold text-primary">
+                <i class="fas fa-comment-alt me-2" aria-hidden="true"></i> 
+                {% if is_return_flow %}Return Feedback{% else %}Feedback{% endif %} for 
+                <span class="book-title text-decoration-underline">{{ book.title }}</span>
+            </h1>
+            <a href="{% if is_return_flow %}{{ url_for('main.user_dashboard') }}{% else %}{{ url_for('main.book_details', slug=book.slug) }}{% endif %}" 
+               class="btn-back btn btn-outline-primary rounded-pill px-4 py-2">
+                <i class="fas fa-arrow-left me-2" aria-hidden="true"></i> 
+                {% if is_return_flow %}Dashboard{% else %}Back to Book{% endif %}
+            </a>
+        </div>
+        <div class="header-divider bg-gradient-primary mb-4"></div>
+    </header>
+
+    {% if current_user.is_authenticated %}
+    <div class="feedback-form-container mb-6">
+        {% if is_return_flow %}
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-exclamation-circle me-2" aria-hidden="true"></i> 
+            <strong>Action Required:</strong> Feedback is required to complete your book return
+        </div>
+        {% endif %}
+        
+        <!-- Enhanced Form Container -->
+        <form method="POST" class="feedback-form glass-effect p-5 rounded-4 shadow-lg" id="feedback-form"
+            action="{% if is_return_flow %}{{ url_for('main.return_book', transaction_id=transaction.id) }}{% else %}{{ url_for('main.add_feedback', book_id=book.id) }}{% endif %}"
+            aria-labelledby="feedback-form-heading">
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    
+            
+            <h2 id="feedback-form-heading" class="visually-hidden">Feedback Form</h2>
+
+            <!-- Interactive Rating Stars -->
+            <div class="form-group rating-group">
+                <label>Rating:</label>
+                <div class="star-rating">
+                    {% for i in range(5,0,-1) %}
+                    <input type="radio" id="star{{i}}" name="rating" value="{{i}}" required>
+                    <label for="star{{i}}" class="fas fa-star"></label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Modern Textarea Design -->
+            <div class="form-group mb-4">
+                <label for="message" class="h5 mb-3 d-block text-secondary">
+                    <i class="fas fa-pen me-2" aria-hidden="true"></i> 
+                    {% if is_return_flow %}Return Feedback{% else %}Your Review{% endif %}
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="input-group shadow-sm">
+                    <textarea name="message" id="message" class="form-control rounded-3 p-3 fs-5" rows="5"
+                            placeholder="{% if is_return_flow %}How was your reading experience? (Required){% else %}Share your thoughts about this book...{% endif %}"
+                            required
+                            aria-describedby="message-help"></textarea>
+                </div>
+                <small id="message-help" class="form-text text-muted mt-2 d-block text-end">
+                    <i class="fas fa-info-circle me-1"></i>Your feedback helps improve our library
+                </small>
+            </div>
+
+            <!-- Enhanced Button Group -->
+            <div class="form-actions d-flex gap-3 justify-content-end">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm">
+                    <i class="fas fa-paper-plane me-2" aria-hidden="true"></i> 
+                    <span class="fw-bold">
+                        {% if is_return_flow %}Submit & Complete Return{% else %}Submit Feedback{% endif %}
+                    </span>
+                </button>
+
+                {% if is_return_flow %}
+                <a href="{{ url_for('main.user_dashboard') }}" 
+                   class="btn btn-outline-secondary btn-lg rounded-pill px-4 py-3"
+                   role="button">
+                    <i class="fas fa-arrow-left me-2" aria-hidden="true"></i> Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <!-- Modern Login Prompt -->
+    <div class="login-hint glass-effect p-5 rounded-4 shadow-lg text-center mb-6">
+        <div class="lock-icon mb-4">
+            <i class="fas fa-lock fa-4x text-primary-gradient" aria-hidden="true"></i>
+        </div>
+        <h3 class="mb-4">Join the Conversation</h3>
+        <p class="lead mb-4">Share your thoughts and help build our reading community</p>
+        <a href="{{ url_for('main.login') }}" 
+           class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm animated-link"
+           role="button">
+            <i class="fas fa-sign-in-alt me-2" aria-hidden="true"></i> Log In to Continue
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Enhanced Reviews Section -->
+    <section class="reviews-section" aria-labelledby="reviews-heading">
+        <h2 id="reviews-heading" class="section-title mb-5">
+            <i class="fas fa-comments me-3" aria-hidden="true"></i> 
+            Community Reviews
+            {% if feedbacks %}
+            <span class="review-count badge bg-primary rounded-pill fs-6">{{ feedbacks|list|length }}</span>
+            {% endif %}
+        </h2>
+        
+        <div class="reviews-container grid gap-4">
+            {% for feedback in feedbacks %}
+            <article class="review-item card animate-slide-up hover-shadow-lg" 
+                     style="animation-delay: {{ loop.index0 * 0.1 }}s"
+                     aria-labelledby="review-{{ feedback.id }}">
+                <div class="card-body p-4">
+                    <div class="review-header d-flex justify-content-between align-items-center mb-3">
+                        <div class="user-badge d-flex align-items-center">
+                            <div class="avatar me-3">
+                                <i class="fas fa-user-circle fa-2x text-primary" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold" id="review-{{ feedback.id }}">
+                                    {{ feedback.user.username }}
+                                </div>
+                                <div class="text-muted small">
+                                    {{ feedback.user.member_since|time_ago }} member
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-meta text-end">
+                            <time class="review-date text-muted small d-block" 
+                                  datetime="{{ feedback.timestamp }}">
+                                {{ feedback.timestamp|time_ago }}
+                            </time>
+                            <div class="review-rating text-warning" 
+                                 aria-label="{{ feedback.rating }} out of 5 stars">
+                                {% for _ in range(feedback.rating) %}
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                {% endfor %}
+                                {% for _ in range(5 - feedback.rating) %}
+                                <i class="far fa-star" aria-hidden="true"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="review-text lead mb-0 text-dark">
+                        {{ feedback.message }}
+                    </p>
+                </div>
+            </article>
+            {% else %}
+            <!-- Enhanced Empty State -->
+            <div class="no-reviews empty-state card border-dashed text-center p-5">
+                <div class="card-body">
+                    <i class="fas fa-book-open fa-4x text-muted mb-4 opacity-50" aria-hidden="true"></i>
+                    <h3 class="mb-3">No Reviews Yet</h3>
+                    <p class="text-muted mb-4">Be the first to share your thoughts about this book!</p>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('main.login') }}" 
+                       class="btn btn-primary rounded-pill px-5 py-2"
+                       role="button">
+                        <i class="fas fa-sign-in-alt me-2"></i>Join to Review
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if feedbacks and feedbacks|length > 5 %}
+        <div class="pagination mt-5 text-center">
+            <button class="btn btn-outline-primary rounded-pill px-5 py-2 load-more"
+                    aria-label="Load more reviews">
+                <i class="fas fa-plus me-2" aria-hidden="true"></i> Load More Reviews
+            </button>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
