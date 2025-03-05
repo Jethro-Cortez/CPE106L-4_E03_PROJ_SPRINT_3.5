@@ -108,8 +108,8 @@ A full-stack Library Management System built with **Flask**, **SQLite**, **SQLAl
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/Jethro-Cortez/CPE106L-4_E03_PROJ_SPRINT_3.git
-   cd CPE106L-4_E03_PROJ_SPRINT_3
+   git clone https://github.com/Jethro-Cortez/CPE106L-4_E03_PROJ_SPRINT_3.5.git
+   cd CPE106L-4_E03_PROJ_SPRINT_3.5
    ```
 
 2. **Set Up Virtual Environment (Optional but Recommended):**
